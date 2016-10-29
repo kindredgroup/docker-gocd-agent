@@ -12,3 +12,4 @@ docker run -t  \
   -d unibet/gocd-agent
 ```
 
+Also check the [GoCD Server repository](https://github.com/unibet/docker-gocd-server).
