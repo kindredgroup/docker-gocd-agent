@@ -1,17 +1,6 @@
 #!/bin/bash
 set -e
 
-# set user and group
-groupmod -g ${GROUP_ID} ${GROUP_NAME}
-usermod -g ${GROUP_ID} -u ${USER_ID} ${USER_NAME}
-
-# if docker is mounted in this agent make sure to create docker user
-if [ -n "$DOCKER_GID_ON_HOST" ]
-then
-  echo "Setting docker user gid to same as host..."
-  groupadd -g $DOCKER_GID_ON_HOST docker && gpasswd -a go docker
-fi
-
 # autoregister agent with server
 if [ -n "$AGENT_KEY" ]
 then
@@ -46,70 +35,11 @@ log4j.appender.ConsoleAppender.layout=org.apache.log4j.PatternLayout
 log4j.appender.ConsoleAppender.layout.ConversionPattern=%d{ISO8601} [%-9t] %-5p %-16c{4}:%L %x- %m%n
 EOL
 
-# chown directories that might have been mounted as volume and thus still have root as owner
-if [ -d "/var/lib/go-agent" ]
-then
-  echo "Setting owner for /var/lib/go-agent..."
-  chown -R ${USER_NAME}:${GROUP_NAME} /var/lib/go-agent
-else
-  echo "Directory /var/lib/go-agent does not exist"
-fi
-
-if [ -d "/var/log/go-agent" ]
-then
-  echo "Setting owner for /var/log/go-agent..."
-  chown -R ${USER_NAME}:${GROUP_NAME} /var/log/go-agent
-else
-  echo "Directory /var/log/go-agent does not exist"
-fi
-
-if [ -d "/k8s-ssh-secret" ]
-then
-
-  echo "Copying files from /k8s-ssh-secret to /var/go/.ssh"
-  mkdir -p /var/go/.ssh
-  cp -Lr /k8s-ssh-secret/* /var/go/.ssh
-
-else
-  echo "Directory /k8s-ssh-secret does not exist"
-fi
-
-if [ -d "/var/go" ]
-then
-  echo "Setting owner for /var/go..."
-  chown -R ${USER_NAME}:${GROUP_NAME} /var/go || echo "No write permissions"
-else
-  echo "Directory /var/go does not exist"
-fi
-
-if [ -d "/var/go/.ssh" ]
-then
-
-  # make sure ssh keys mounted from kubernetes secret have correct permissions
-  echo "Setting owner for /var/go/.ssh..."
-  chmod 400 /var/go/.ssh/* || echo "Could not write permissions for /var/go/.ssh/*"
-
-  # rename ssh keys to deal with kubernetes secret name restrictions
-  cd /var/go/.ssh
-  for f in *-*
-  do
-    echo "Renaming $f to ${f//-/_}..."
-    mv "$f" "${f//-/_}" || echo "No write permissions for /var/go/.ssh"
-  done
-
-  ls -latr /var/go/.ssh
-
-else
-  echo "Directory /var/go/.ssh does not exist"
-fi
-
 # update config to point to correct go.cd server hostname and port
-if [ -n "$GO_SERVER" ]
+if [ -n "$GO_SERVER_URL" ]
 then
-  GO_SERVER_URL=https://$GO_SERVER:8154/go
+  sed -i -e "s|GO_SERVER_URL=https://127.0.0.1:8154/go|GO_SERVER_URL=${GO_SERVER_URL}/go|" /etc/default/go-agent
 fi
-
-sed -i -e "s|GO_SERVER_URL=https://127.0.0.1:8154/go|GO_SERVER_URL=${GO_SERVER_URL}|" /etc/default/go-agent
 
 # wait for server to be available
 until curl -ksLo /dev/null "${GO_SERVER_URL}"
@@ -118,22 +48,5 @@ do
   echo "Waiting for ${GO_SERVER_URL}"
 done
 
-# start agent as go user
-/bin/su - ${USER_NAME} -c "GO_SERVER_URL=$GO_SERVER_URL AGENT_BOOTSTRAPPER_ARGS=\"$AGENT_BOOTSTRAPPER_ARGS\" AGENT_MEM=$AGENT_MEM AGENT_MAX_MEM=$AGENT_MAX_MEM /usr/share/go-agent/agent.sh" &
-
-supid=$!
-
-echo "Go.cd agent pid: $supid"
-
-# wait for agent to start logging
-while [ ! -f /var/log/go-agent/go-agent-bootstrapper.log ]
-do
-  sleep 1
-done
-
-# wait for /bin/su process, so container fails if agent fails
-wait $supid
-
-echo "Go.cd agent stopped"
-ps
-0
+echo "Starting go.cd agent..."
+/usr/local/go-agent/agent.sh

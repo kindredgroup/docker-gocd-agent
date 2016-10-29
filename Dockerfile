@@ -1,41 +1,42 @@
-FROM unibet/base-debian-git-jre8:latest
+FROM unibet/alpine-jre:7
 MAINTAINER karel.bemelmans@unibet.com
 
-# build time environment variables
-ENV GO_VERSION=16.10.0-4131 \
-    USER_NAME=go \
-    USER_ID=999 \
-    GROUP_NAME=go \
-    GROUP_ID=999
+# Install more apk packages we might need
+RUN apk --update add \
+  bash \
+  curl \
+  git \
+  subversion
 
-# install go agent
-RUN groupadd -r -g $GROUP_ID $GROUP_NAME \
-    && useradd -r -g $GROUP_NAME -u $USER_ID -d /var/go $USER_NAME \
-    && mkdir -p /var/lib/go-agent \
-    && mkdir -p /var/go \
-    && curl -fSL "https://download.go.cd/binaries/${GO_VERSION}/deb/go-agent_${GO_VERSION}_all.deb" -o go-agent.deb \
-    && dpkg -i go-agent.deb \
-    && rm -rf go-agent.db \
-    && sed -i -e "s/DAEMON=Y/DAEMON=N/" /etc/default/go-agent \
-    && echo "export PATH=$PATH" | tee -a /var/go/.profile \
-    && chown -R ${USER_NAME}:${GROUP_NAME} /var/lib/go-agent \
-    && chown -R ${USER_NAME}:${GROUP_NAME} /var/go \
-    && groupmod -g 200 ssh
+# Add go user and group
+RUN addgroup -g 1000 go && adduser -u 1000 -h /var/lib/go-server -H -S -G go go
 
-# runtime environment variables
-ENV GO_SERVER_URL=https://localhost:8154/go \
-    AGENT_BOOTSTRAPPER_ARGS="-sslVerificationMode NONE" \
-    AGENT_MEM=128m \
-    AGENT_MAX_MEM=256m \
-    AGENT_KEY="" \
-    AGENT_RESOURCES="" \
-    AGENT_ENVIRONMENTS="" \
-    AGENT_HOSTNAME="" \
-    DOCKER_GID_ON_HOST=""
+# Install GoCD Server from zip file
+ARG GO_MAJOR_VERSION=16.11.0
+ARG GO_BUILD_VERSION=4185
+ARG GO_VERSION="${GO_MAJOR_VERSION}-${GO_BUILD_VERSION}"
+ARG GOCD_SHA256=2d1d750be75340a6e87058be91c8a0af2187985bef916d4901b03e06875d5bd1
 
-# v16
+RUN curl -L --silent https://download.go.cd/binaries/${GO_VERSION}/generic/go-agent-${GO_VERSION}.zip \
+       -o /tmp/go-agent.zip \
+  && echo "${GOCD_SHA256}  /tmp/go-agent.zip" | sha256sum -c - \
+  && unzip /tmp/go-agent.zip -d /usr/local \
+  && ln -s /usr/local/go-agent-${GO_MAJOR_VERSION} /usr/local/go-agent \
+  && chown -R go:go /usr/local/go-agent-${GO_MAJOR_VERSION} \
+  && rm /tmp/go-agent.zip
+
+RUN mkdir -p /etc/default \
+  && cp /usr/local/go-agent-${GO_MAJOR_VERSION}/go-agent.default /etc/default/go-agent \
+  && chown go:go /etc/default /etc/default/go-agent \
+  && sed -i -e "s|DAEMON=Y|DAEMON=N|" /etc/default/go-agent
+
+RUN mkdir /etc/go && chown go:go /etc/go \
+  && mkdir /var/lib/go-agent && chown go:go /var/lib/go-agent \
+  && mkdir /var/log/go-agent && chown go:go /var/log/go-agent
+
+# add the entrypoint config and run it when we start the container
 COPY ./docker-entrypoint.sh /
+RUN chown go:go /docker-entrypoint.sh && chmod 500 /docker-entrypoint.sh
 
-RUN chmod 500 /docker-entrypoint.sh
-
+USER go
 ENTRYPOINT ["/docker-entrypoint.sh"]
