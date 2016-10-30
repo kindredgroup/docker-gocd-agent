@@ -6,16 +6,14 @@ if [ -n "$AGENT_KEY" ]
 then
   mkdir -p /var/lib/go-agent/config
   echo "agent.auto.register.key=$AGENT_KEY" > /var/lib/go-agent/config/autoregister.properties
-  if [ -n "$AGENT_RESOURCES" ]
-  then
+
+  if [ -n "$AGENT_RESOURCES" ]; then
     echo "agent.auto.register.resources=$AGENT_RESOURCES" >> /var/lib/go-agent/config/autoregister.properties
   fi
-  if [ -n "$AGENT_ENVIRONMENTS" ]
-  then
+  if [ -n "$AGENT_ENVIRONMENTS" ]; then
     echo "agent.auto.register.environments=$AGENT_ENVIRONMENTS" >> /var/lib/go-agent/config/autoregister.properties
   fi
-  if [ -n "$AGENT_HOSTNAME" ]
-  then
+  if [ -n "$AGENT_HOSTNAME" ]; then
     echo "agent.auto.register.hostname=$AGENT_HOSTNAME" >> /var/lib/go-agent/config/autoregister.properties
   fi
 fi
@@ -36,13 +34,12 @@ log4j.appender.ConsoleAppender.layout.ConversionPattern=%d{ISO8601} [%-9t] %-5p 
 EOL
 
 # update config to point to correct go.cd server hostname and port
-if [ -n "$GO_SERVER_URL" ]
-then
+if [ -n "$GO_SERVER_URL" ]; then
   sed -i -e "s|GO_SERVER_URL=https://127.0.0.1:8154/go|GO_SERVER_URL=${GO_SERVER_URL}/go|" /etc/default/go-agent
 fi
 
 # wait for server to be available
-until curl -ksLo /dev/null "${GO_SERVER_URL}"
+until curl -Lks -o /dev/null "${GO_SERVER_URL}"
 do
   sleep 5
   echo "Waiting for ${GO_SERVER_URL}"
