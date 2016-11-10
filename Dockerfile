@@ -6,6 +6,7 @@ RUN apk --no-cache --update add \
   bash \
   curl \
   git \
+  py-virtualenv \
   subversion
 
 # Add go user and group
