@@ -34,11 +34,8 @@ log4j.appender.ConsoleAppender.layout.ConversionPattern=%d{ISO8601} [%-9t] %-5p 
 EOL
 
 # update config to point to correct go.cd server hostname and port
-if [ -n "$GO_SERVER_URL" ]; then
-  sed -i -e "s|GO_SERVER_URL=https://127.0.0.1:8154/go|GO_SERVER_URL=${GO_SERVER_URL}|" /etc/default/go-agent
-else
-  GO_SERVER_URL="https://127.0.0.1:8154/go"
-fi
+GO_SERVER_URL=${GO_SERVER_URL:-"https://127.0.0.1:8154/go"}
+sed -i -e "s|^GO_SERVER_URL=.*|GO_SERVER_URL=${GO_SERVER_URL}|" /etc/default/go-agent
 
 # wait for server to be available
 until curl -Lks -o /dev/null "${GO_SERVER_URL}"
