@@ -35,7 +35,7 @@ EOL
 
 # update config to point to correct go.cd server hostname and port
 if [ -n "$GO_SERVER_URL" ]; then
-  sed -i -e "s|GO_SERVER_URL=https://127.0.0.1:8154/go|GO_SERVER_URL=${GO_SERVER_URL}/go|" /etc/default/go-agent
+  sed -i -e "s|GO_SERVER_URL=https://127.0.0.1:8154/go|GO_SERVER_URL=${GO_SERVER_URL}|" /etc/default/go-agent
 fi
 
 # wait for server to be available
