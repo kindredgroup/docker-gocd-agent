@@ -7,7 +7,8 @@ RUN apk --no-cache --update add \
   curl \
   git \
   py-virtualenv \
-  subversion
+  subversion \
+  && rm -rf /var/cache/apk/*
 
 # Add go user and group
 RUN addgroup -g 500 go && adduser -u 500 -h /var/lib/go-agent -H -S -G go go
