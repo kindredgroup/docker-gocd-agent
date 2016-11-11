@@ -8,6 +8,8 @@ This agent is designed to run as a stateless agent, do not use mounted volumes.
 
 ```
 docker run -t  \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /usr/bin/docker:/usr/bin/docker \
   -e "GO_SERVER_URL=https://localhost:8154/go" \
   -e "AGENT_KEY=secretkey" \
   -e "AGENT_RESOURCES=docker" \
