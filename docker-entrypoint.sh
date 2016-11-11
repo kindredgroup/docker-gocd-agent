@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+# if docker is mounted in this agent make sure to create docker user
+if [ -n "$DOCKER_GID_ON_HOST" ]
+then
+  echo "Setting docker user gid to same as host..."
+  groupadd -g $DOCKER_GID_ON_HOST docker && gpasswd -a go docker
+fi
+
 # autoregister agent with server
 if [ -n "$AGENT_KEY" ]
 then

@@ -9,6 +9,7 @@ docker run -t  \
   -e "AGENT_RESOURCES=docker" \
   -e "AGENT_ENVIRONMENTS=Production" \
   -e "AGENT_HOSTNAME=deploy-agent-01" \
+  -e "DOCKER_GID_ON_HOST=496" \
   -d unibet/gocd-agent
 ```
 
