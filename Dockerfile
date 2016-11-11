@@ -1,4 +1,4 @@
-FROM unibet/alpine-jre:7
+FROM alpine:3.4
 MAINTAINER karel.bemelmans@unibet.com
 
 # Install more apk packages we might need
@@ -6,6 +6,7 @@ RUN apk --no-cache --update add \
   bash \
   curl \
   git \
+  openjdk7-jre \
   py-virtualenv \
   subversion \
   && rm -rf /var/cache/apk/*
