@@ -5,6 +5,7 @@ MAINTAINER karel.bemelmans@unibet.com
 RUN apk --no-cache --update add \
   bash \
   curl \
+  docker \
   git \
   openjdk7-jre \
   py-virtualenv \
@@ -12,7 +13,8 @@ RUN apk --no-cache --update add \
   && rm -rf /var/cache/apk/*
 
 # Add go user and group
-RUN addgroup -g 500 go && adduser -u 500 -h /var/lib/go-agent -H -S -G go go
+RUN addgroup -g 500 go \
+  && adduser -u 500 -h /var/lib/go-agent -H -S -G go -G docker go
 
 # Install GoCD Server from zip file
 ARG GO_MAJOR_VERSION=16.11.0
