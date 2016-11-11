@@ -14,3 +14,7 @@ docker run -t  \
 ```
 
 Also check the [GoCD Server repository](https://github.com/unibet/docker-gocd-server).
+
+## Automated build and push to Docker hub
+
+Since this image uses the base Amazon Linux image from ECR, it's not possible to have an automated build by simply linking it to Docker Hub. ECR requires a login before pulling, so we push this repository from our internal Go build server to Docker Hub.

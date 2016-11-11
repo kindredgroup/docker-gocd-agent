@@ -1,10 +1,10 @@
-#!/bin/bash
-set -e
+#!/bin/bash -e
 
 # if docker is mounted in this agent make sure to create docker user
-if [ -n "$DOCKER_GID_ON_HOST" ]; then
+if [ -n "$DOCKER_GID_ON_HOST" ] && [ ! "$DOCKER_GID_ON_HOST" == 500 ]; then
   echo "Setting docker user gid to same as host..."
-  groupadd -g $DOCKER_GID_ON_HOST docker && gpasswd -a go docker
+  groupadd -g $DOCKER_GID_ON_HOST docker
+  usermod -a -G docker go
 fi
 
 # autoregister agent with server
@@ -51,6 +51,7 @@ do
 done
 
 # We have to run as user go here.
+chown -R go:go /var/lib/go-agent
 
 echo "Starting go.cd agent..."
-/bin/su - go -c "GO_SERVER_URL=$GO_SERVER_URL AGENT_BOOTSTRAPPER_ARGS=\"$AGENT_BOOTSTRAPPER_ARGS\" AGENT_MEM=$AGENT_MEM AGENT_MAX_MEM=$AGENT_MAX_MEM /usr/local/go-agent/agent.sh" &
+/bin/su - go -c "GO_SERVER_URL=$GO_SERVER_URL AGENT_BOOTSTRAPPER_ARGS=\"$AGENT_BOOTSTRAPPER_ARGS\" AGENT_MEM=$AGENT_MEM AGENT_MAX_MEM=$AGENT_MAX_MEM /usr/local/go-agent/agent.sh"

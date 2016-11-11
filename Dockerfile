@@ -1,20 +1,19 @@
-FROM alpine:3.4
+FROM 137112412989.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest
 MAINTAINER karel.bemelmans@unibet.com
 
 # Install more apk packages we might need
-RUN apk --no-cache --update add \
-  bash \
-  curl \
-  docker \
+RUN yum install -y \
+  aws-cli \
+  device-mapper-libs \
   git \
-  openjdk7-jre \
-  py-virtualenv \
+  java-1.7.0-openjdk \
   subversion \
-  && rm -rf /var/cache/apk/*
+  unzip \
+  && easy_install pip
 
 # Add go user and group
-RUN addgroup -g 500 go \
-  && adduser -u 500 -h /var/lib/go-agent -H -D -s /bin/bash -G go go
+RUN groupadd -g 500 go \
+  && useradd -u 500 -g 500 -d /var/lib/go-agent --no-create-home -s /bin/bash -G go go
 
 # Install GoCD Server from zip file
 ARG GO_MAJOR_VERSION=16.11.0
