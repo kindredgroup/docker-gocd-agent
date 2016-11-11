@@ -14,7 +14,7 @@ RUN apk --no-cache --update add \
 
 # Add go user and group
 RUN addgroup -g 500 go \
-  && adduser -u 500 -h /var/lib/go-agent -H -S -G go go
+  && adduser -u 500 -h /var/lib/go-agent -H -D -s /bin/bash -G go go
 
 # Install GoCD Server from zip file
 ARG GO_MAJOR_VERSION=16.11.0
@@ -41,7 +41,6 @@ RUN mkdir /etc/go && chown go:go /etc/go \
 
 # add the entrypoint config and run it when we start the container
 COPY ./docker-entrypoint.sh /
-RUN chown go:go /docker-entrypoint.sh && chmod 500 /docker-entrypoint.sh
+RUN chmod 500 /docker-entrypoint.sh
 
-USER go
 ENTRYPOINT ["/docker-entrypoint.sh"]

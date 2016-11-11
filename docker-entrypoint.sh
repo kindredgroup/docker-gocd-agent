@@ -2,8 +2,7 @@
 set -e
 
 # if docker is mounted in this agent make sure to create docker user
-if [ -n "$DOCKER_GID_ON_HOST" ]
-then
+if [ -n "$DOCKER_GID_ON_HOST" ]; then
   echo "Setting docker user gid to same as host..."
   groupadd -g $DOCKER_GID_ON_HOST docker && gpasswd -a go docker
 fi
@@ -51,5 +50,7 @@ do
   echo "Waiting for ${GO_SERVER_URL}"
 done
 
+# We have to run as user go here.
+
 echo "Starting go.cd agent..."
-/usr/local/go-agent/agent.sh
+/bin/su - go -c "GO_SERVER_URL=$GO_SERVER_URL AGENT_BOOTSTRAPPER_ARGS=\"$AGENT_BOOTSTRAPPER_ARGS\" AGENT_MEM=$AGENT_MEM AGENT_MAX_MEM=$AGENT_MAX_MEM /usr/local/go-agent/agent.sh" &
