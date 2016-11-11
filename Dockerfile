@@ -9,7 +9,7 @@ RUN yum install -y \
   java-1.7.0-openjdk \
   subversion \
   unzip \
-  && easy_install pip
+  && easy_install virtualenv
 
 # Add go user and group
 RUN groupadd -g 500 go \
