@@ -1,4 +1,4 @@
-FROM 137112412989.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest
+FROM amazonlinux:latest
 MAINTAINER karel.bemelmans@unibet.com
 
 # Install more apk packages we might need
