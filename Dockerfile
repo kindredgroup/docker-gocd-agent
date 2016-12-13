@@ -2,14 +2,14 @@ FROM amazonlinux:latest
 MAINTAINER karel.bemelmans@unibet.com
 
 # Install more apk packages we might need
-RUN yum install -y \
-  aws-cli \
-  device-mapper-libs \
-  git \
-  java-1.7.0-openjdk \
-  subversion \
-  unzip \
-  && easy_install virtualenv
+RUN set -x \
+  && yum update \
+  && yum install -y \
+    device-mapper-libs \
+    git \
+    java-1.7.0-openjdk \
+    subversion \
+    unzip
 
 # Add go user and group
 RUN groupadd -g 500 go \
