@@ -20,7 +20,7 @@ ARG GO_BUILD_VERSION=4352
 ARG GO_VERSION="${GO_MAJOR_VERSION}-${GO_BUILD_VERSION}"
 ARG GOCD_SHA256=c9a204d63987ebd7819f6b04a93ca79d1b2a8969cddb6e86444d92f7ab657747
 
-RUN curl -L --silent https://download.go.cd/binaries/${GO_VERSION}/generic/go-agent-${GO_VERSION}.zip \
+RUN curl -L --silent https://download.gocd.io/binaries/${GO_VERSION}/generic/go-agent-${GO_VERSION}.zip \
        -o /tmp/go-agent.zip \
   && echo "${GOCD_SHA256}  /tmp/go-agent.zip" | sha256sum -c - \
   && unzip /tmp/go-agent.zip -d /usr/local \
