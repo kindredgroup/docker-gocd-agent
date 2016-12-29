@@ -1,9 +1,8 @@
 FROM amazonlinux:latest
 MAINTAINER karel.bemelmans@unibet.com
 
-# Install more apk packages we might need
 RUN set -x \
-  && yum update \
+  && yum update -y \
   && yum install -y \
     device-mapper-libs \
     git \
