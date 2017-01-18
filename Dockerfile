@@ -6,7 +6,7 @@ RUN set -x \
   && yum install -y \
     device-mapper-libs \
     git \
-    java-1.7.0-openjdk \
+    java-1.8.0-openjdk \
     subversion \
     unzip
 
