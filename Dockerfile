@@ -1,14 +1,17 @@
-FROM amazonlinux:latest
+FROM centos:7
 MAINTAINER karel.bemelmans@unibet.com
 
 RUN set -x \
   && yum update -y \
+  && yum install -y epel-release \
   && yum install -y \
     device-mapper-libs \
     git \
     java-1.8.0-openjdk \
+    python2-pip \
     subversion \
-    unzip
+    unzip \
+  && pip install awscli
 
 # Add go user and group
 RUN groupadd -g 500 go \
