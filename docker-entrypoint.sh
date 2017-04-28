@@ -24,6 +24,10 @@ then
   fi
 fi
 
+# copy logging config
+test -d /var/lib/go-agent/config || mkdir -p /var/lib/go-agent/config
+cp /usr/local/go-agent/config/*.properties /var/lib/go-agent/config
+
 # log to std out instead of file
 cat >/var/lib/go-agent/log4j.properties <<EOL
 log4j.rootCategory=INFO, ConsoleAppender
