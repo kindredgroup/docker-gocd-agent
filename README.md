@@ -1,6 +1,6 @@
-# Amazon Linux GoCD Agent Docker image
+# GoCD Agent Docker image
 
-This GoCD Agent is a docker image built on top of Amazon Linux. We run this on AWS EC2 and having the container also run Amazon Linux saves us some work of getting docker-in-docker to work. If the OS distribution of the host and container match, mounting the Docker binary and socket _should_ be enough.
+This GoCD Agent is a docker image built on top of Centos 7. 
 
 ## Example usage
 
