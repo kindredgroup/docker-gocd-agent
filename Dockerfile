@@ -11,6 +11,7 @@ RUN set -x \
     python2-pip \
     subversion \
     unzip \
+    jq \
   && pip install awscli
 
 # Add go user and group
