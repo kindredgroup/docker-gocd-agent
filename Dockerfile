@@ -19,10 +19,10 @@ RUN groupadd -g 500 go \
   && useradd -u 500 -g 500 -d /var/lib/go-agent --no-create-home -s /bin/bash -G go go
 
 # Install GoCD Server from zip file
-ARG GO_MAJOR_VERSION=17.10.0
-ARG GO_BUILD_VERSION=5380
+ARG GO_MAJOR_VERSION=17.11.0
+ARG GO_BUILD_VERSION=5520
 ARG GO_VERSION="${GO_MAJOR_VERSION}-${GO_BUILD_VERSION}"
-ARG GOCD_SHA256=a5e50f7a5f0375d8bf13183fd2d534fc56c9b2915020a0cd69829c1f5e4d08e6
+ARG GOCD_SHA256=b69abdb70bf1bc4b7ae884b614dde094afcc7eab26dc265177049d92968a0e48
 
 RUN curl -L --silent https://download.gocd.org/binaries/${GO_VERSION}/generic/go-agent-${GO_VERSION}.zip \
        -o /tmp/go-agent.zip \
