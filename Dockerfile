@@ -42,7 +42,7 @@ RUN mkdir /etc/go && chown go:go /etc/go \
   && mkdir /var/log/go-agent && chown go:go /var/log/go-agent
 
 # log everything to console
-RUN sed -i -e 's|log4j.rootCategory=.*|log4j.rootCategory=INFO,CONSOLE\r\nlog4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender\r\nlog4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout\r\nlog4j.appender.CONSOLE.layout.ConversionPattern=%d{ISO8601} [%-9t] %-5p %-16c{4}:%L %x- %m%n\r\n|' /usr/local/go-agent/config/*.properties
+#RUN sed -i -e 's|log4j.rootCategory=.*|log4j.rootCategory=INFO,CONSOLE\r\nlog4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender\r\nlog4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout\r\nlog4j.appender.CONSOLE.layout.ConversionPattern=%d{ISO8601} [%-9t] %-5p %-16c{4}:%L %x- %m%n\r\n|' /usr/local/go-agent/config/*.properties
 
 # add the entrypoint config and run it when we start the container
 COPY ./docker-entrypoint.sh /
