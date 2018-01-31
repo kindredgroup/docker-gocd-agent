@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  gocd-agent:
+    build: .
+    environment:
+      - GO_SERVER_URL=https://gocd-server:8154/go/
+      - AGENT_KEY=VERYSECRETGOAGENTKEY
+      - AGENT_HOSTNAME=deploy-agent-01
+
+  gocd-server:
+    image: unibet/gocd-server
+    environment:
+      - AGENT_KEY=VERYSECRETGOAGENTKEY
+      - GOCD_API_USERNAME=apiuser
+      - GOCD_API_PASSWORD=secret
+
+  sut:
+    image: graze/bats
+    environment:
+      - GOCD_API_USERNAME=apiuser
+      - GOCD_API_PASSWORD=secret
+      - AGENT_HOSTNAME=deploy-agent-01
+    volumes:
+      - ./tests:/tests
+    command:
+      - /tests
+    depends_on:
+    - gocd-server
+    - gocd-agent
