@@ -18,11 +18,11 @@ RUN set -x \
 RUN groupadd -g 500 go \
   && useradd -u 500 -g 500 -d /var/lib/go-agent --no-create-home -s /bin/bash -G go go
 
-# Install GoCD Server from zip file
-ARG GO_MAJOR_VERSION=17.11.0
-ARG GO_BUILD_VERSION=5520
+# Install GoCD Agent from zip file
+ARG GO_MAJOR_VERSION=18.1.0
+ARG GO_BUILD_VERSION=5937
 ARG GO_VERSION="${GO_MAJOR_VERSION}-${GO_BUILD_VERSION}"
-ARG GOCD_SHA256=b69abdb70bf1bc4b7ae884b614dde094afcc7eab26dc265177049d92968a0e48
+ARG GOCD_SHA256=cc2f61ee62f14dc0a76ddd8f2ca1c6f05130669adb2902acaaedcbaa8be4cec5
 
 RUN curl -L --silent https://download.gocd.org/binaries/${GO_VERSION}/generic/go-agent-${GO_VERSION}.zip \
        -o /tmp/go-agent.zip \
@@ -38,11 +38,11 @@ RUN mkdir -p /etc/default \
   && sed -i -e "s|DAEMON=Y|DAEMON=N|" /etc/default/go-agent
 
 RUN mkdir /etc/go && chown go:go /etc/go \
-  && mkdir /var/lib/go-agent && chown go:go /var/lib/go-agent \
+  && mkdir -p /var/lib/go-agent/config && chown -R go:go /var/lib/go-agent \
   && mkdir /var/log/go-agent && chown go:go /var/log/go-agent
 
-# log everything to console
-#RUN sed -i -e 's|log4j.rootCategory=.*|log4j.rootCategory=INFO,CONSOLE\r\nlog4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender\r\nlog4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout\r\nlog4j.appender.CONSOLE.layout.ConversionPattern=%d{ISO8601} [%-9t] %-5p %-16c{4}:%L %x- %m%n\r\n|' /usr/local/go-agent/config/*.properties
+# Copy log config
+COPY config/*.xml /var/lib/go-agent/config/
 
 # add the entrypoint config and run it when we start the container
 COPY ./docker-entrypoint.sh /
