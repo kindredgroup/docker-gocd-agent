@@ -2,7 +2,7 @@
 setup() {
 
   retries=0
-  max_retries=120
+  max_retries=300
 
   # tolerate that commands fail
   set +e
