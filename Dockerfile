@@ -22,7 +22,7 @@ RUN groupadd -g 500 go \
 ARG GO_MAJOR_VERSION=19.2.0
 ARG GO_BUILD_VERSION=8641
 ARG GO_VERSION="${GO_MAJOR_VERSION}-${GO_BUILD_VERSION}"
-ARG GOCD_SHA256=f8b8279cf4392b20c1100315c285b8cb3704c73b92921f0f74c122a899352aca
+ARG GOCD_SHA256=0db15beed464abcd17e3fa932fc6b6becfa6068f2f98c808c191d32e269082b0
 
 RUN curl -L --silent https://download.gocd.org/binaries/${GO_VERSION}/generic/go-agent-${GO_VERSION}.zip \
        -o /tmp/go-agent.zip \
