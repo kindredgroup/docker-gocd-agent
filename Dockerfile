@@ -7,7 +7,7 @@ RUN set -x \
   && yum install -y \
     device-mapper-libs \
     git \
-    java-1.8.0-openjdk \
+    java-11-openjdk \
     python2-pip \
     subversion \
     unzip \
@@ -19,10 +19,10 @@ RUN groupadd -g 500 go \
   && useradd -u 500 -g 500 -d /var/lib/go-agent --no-create-home -s /bin/bash -G go go
 
 # Install GoCD Agent from zip file
-ARG GO_MAJOR_VERSION=19.3.0
-ARG GO_BUILD_VERSION=8959
+ARG GO_MAJOR_VERSION=19.5.0
+ARG GO_BUILD_VERSION=9272
 ARG GO_VERSION="${GO_MAJOR_VERSION}-${GO_BUILD_VERSION}"
-ARG GOCD_SHA256=375f961bd0279fdb0d5dab8e47dabd6a2b041bed3583e55bd0a4a328d06e39da
+ARG GOCD_SHA256=eab1e432fac5348fa3b6171ffa54e338089ab1c5c7b80eb246a699be0e5b8282
 
 RUN curl -L --silent https://download.gocd.org/binaries/${GO_VERSION}/generic/go-agent-${GO_VERSION}.zip \
        -o /tmp/go-agent.zip \
